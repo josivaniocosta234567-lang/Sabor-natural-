@@ -130,12 +130,20 @@ function addMarmita(){marmitas.push({nome:marmitaNome.value,preco:marmitaPreco.v
 function addFoto(){fotos.push({nome:fotoNome.value,link:fotoLink.value});fotoNome.value="";fotoLink.value="";salvar("fotos",fotos);}
 
 function render(){
- listaFrutas.innerHTML=frutas.map(x=>`<div class=item>${x}</div>`).join("");
- listaCaldas.innerHTML=caldas.map(x=>`<div class=item>${x}</div>`).join("");
- listaAdicionais.innerHTML=adicionais.map(x=>`<div class=item>${x}</div>`).join("");
- listaCopos.innerHTML=copos.map(x=>`<div class=item>${x.nome} - R$ ${x.preco}</div>`).join("");
- listaMarmitas.innerHTML=marmitas.map(x=>`<div class=item>${x.nome} - R$ ${x.preco}</div>`).join("");
- listaFotos.innerHTML=fotos.map(x=>`<div class=item>${x.nome}</div>`).join("");
+  listaFrutas.innerHTML = frutas.map((x,i)=>
+    `<div class="item">${x}
+    <button onclick="frutas.splice(${i},1);salvar('frutas',frutas)">🗑️</button>
+    </div>`).join("");
+
+  listaCaldas.innerHTML = caldas.map((x,i)=>
+    `<div class="item">${x}
+    <button onclick="caldas.splice(${i},1);salvar('caldas',caldas)">🗑️</button>
+    </div>`).join("");
+
+  listaAdicionais.innerHTML = adicionais.map((x,i)=>
+    `<div class="item">${x}
+    <button onclick="adicionais.splice(${i},1);salvar('adicionais',adicionais)">🗑️</button>
+    </div>`).join("");
 }
 render();
 </script>
