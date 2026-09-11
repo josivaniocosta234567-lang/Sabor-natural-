@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sabor Natural</title>
+<style>
+body{margin:0;font-family:Arial;background:#6d28d9}
+.topo{background:#7e22ce;color:#fff;padding:20px;text-align:center}
+.card{background:#fff;margin:15px;border-radius:16px;padding:15px}
+h2{color:#7e22ce}
+select,button{width:100%;padding:12px;margin:8px 0;border-radius:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{background:#f3f3f3;padding:8px;border-radius:8px;font-size:14px}
+.total{text-align:center;font-size:24px;font-weight:bold;color:#16a34a}
+button{background:#16a34a;color:#fff;border:none}
+</style>
+</head>
+<body>
+
+<div class="topo">
+<h1>🍇 SABOR NATURAL</h1>
+<p>@sabor.natural86</p>
+<p>WhatsApp: (81)99984-6140</p>
+</div>
+
+<div class="card">
+<h2>Monte seu Açaí</h2>
+
+<select id="cat">
+<option value="m">Marmita</option>
+<option value="c">Açaí + Cupuaçu</option>
+</select>
+
+<select id="base"></select>
+
+<h3>Fruta</h3>
+<div class="grid" id="frutas"></div>
+
+<h3>Cobertura</h3>
+<div class="grid" id="cob"></div>
+
+<div class="total" id="preco"></div>
+
+<button onclick="pedido()">FINALIZAR PEDIDO</button>
+</div>
+
+<script>
+const WPP="5581999846140";
+const frutas=["Banana","Morango","Uva","Manga"];
+const cob=["Chocolate","Morango","Caramelo","Uva"];
+
+const dados={
+m:[
+["Leite Condensado",12.99],
+["Creme Ninho",14.99],
+["Creme Nutella",14.99]],
+c:[
+["Leite Condensado",13.99],
+["Creme Ninho",15.99],
+["Creme Nutella",15.99]]
+};
+
+function lista(id,itens){
+let h="";
+itens.forEach(x=>h+=`<label><input type="radio" name="${id}" value="${x}"> ${x}</label>`);
+document.getElementById(id).innerHTML=h;
+}
+lista("frutas",frutas);
+lista("cob",cob);
+
+function atualizar(){
+base.innerHTML="";
+dados[cat.value].forEach((i,n)=>{
+base.innerHTML+=`<option value="${n}">${i[0]} - R$ ${i[1].toFixed(2).replace(".",",")}</option>`;
+});
+preco.innerHTML="R$ "+dados[cat.value][0][1].toFixed(2).replace(".",",");
+}
+cat.onchange=atualizar;
+base.onchange=()=>preco.innerHTML="R$ "+dados[cat.value][base.value][1].toFixed(2).replace(".",",");
+atualizar();
+
+function pedido(){
+let f=document.querySelector('input[name=frutas]:checked');
+let c=document.querySelector('input[name=cob]:checked');
+if(!f||!c){alert("Escolha fruta e cobertura");return;}
+let item=dados[cat.value][base.value];
+let msg=`🍇 *SABOR NATURAL*%0A🍧 ${item[0]}%0A🍓 ${f.value}%0A🍯 ${c.value}%0A💰 R$ ${item[1].toFixed(2).replace(".",",")}`;
+window.open(`https://wa.me/${WPP}?text=${msg}`,"_blank");
+}
+</script>
+
+</body>
+</html>
