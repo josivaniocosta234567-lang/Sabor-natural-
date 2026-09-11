@@ -2,93 +2,106 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sabor Natural</title>
+
 <style>
-body{margin:0;font-family:Arial;background:#6d28d9}
-.topo{background:#7e22ce;color:#fff;padding:20px;text-align:center}
-.card{background:#fff;margin:15px;border-radius:16px;padding:15px}
-h2{color:#7e22ce}
-select,button{width:100%;padding:12px;margin:8px 0;border-radius:10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-label{background:#f3f3f3;padding:8px;border-radius:8px;font-size:14px}
-.total{text-align:center;font-size:24px;font-weight:bold;color:#16a34a}
-button{background:#16a34a;color:#fff;border:none}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#5b21b6;color:#222}
+.header{
+background:linear-gradient(135deg,#6d28d9,#a21caf);
+padding:28px 20px;
+text-align:center;
+color:#fff}
+.header h1{font-size:32px}
+.header p{opacity:.95}
+.container{max-width:430px;margin:auto;padding:15px}
+.card{
+background:#fff;
+border-radius:18px;
+padding:18px;
+margin-bottom:15px}
+.titulo{
+font-size:20px;
+color:#6d28d9;
+margin-bottom:12px;
+font-weight:bold}
+select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-top:8px}
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-top:8px}
+.item{
+background:#f5f5f5;
+padding:10px;
+border-radius:10px;
+font-size:14px}
+.item input{margin-right:6px}
+.total{
+background:#ecfdf5;
+border:2px solid #16a34a;
+padding:15px;
+border-radius:14px;
+text-align:center}
+.total span{
+font-size:28px;
+font-weight:bold;
+color:#16a34a}
+.btn{
+width:100%;
+padding:16px;
+background:#16a34a;
+color:#fff;
+border:none;
+border-radius:14px;
+font-size:18px;
+font-weight:bold;
+margin-top:12px}
 </style>
 </head>
+
 <body>
 
-<div class="topo">
+<div class="header">
 <h1>🍇 SABOR NATURAL</h1>
 <p>@sabor.natural86</p>
-<p>WhatsApp: (81)99984-6140</p>
+<p>WhatsApp (81) 99984-6140</p>
 </div>
+
+<div class="container">
 
 <div class="card">
-<h2>Monte seu Açaí</h2>
+<div class="titulo">Monte seu Açaí</div>
 
-<select id="cat">
-<option value="m">Marmita</option>
-<option value="c">Açaí + Cupuaçu</option>
+<label>Categoria</label>
+<select id="categoria">
+<option value="marmita">Marmita de Açaí</option>
+<option value="cupuacu">Açaí + Cupuaçu</option>
+<option value="copo">Açaí no Copo</option>
 </select>
 
-<select id="base"></select>
-
-<h3>Fruta</h3>
-<div class="grid" id="frutas"></div>
-
-<h3>Cobertura</h3>
-<div class="grid" id="cob"></div>
-
-<div class="total" id="preco"></div>
-
-<button onclick="pedido()">FINALIZAR PEDIDO</button>
+<div id="boxTamanho" style="display:none;margin-top:10px">
+<label>Tamanho do copo</label>
+<select id="tamanho">
+<option value="330">330ml</option>
+<option value="400">400ml</option>
+<option value="500">500ml</option>
+</select>
 </div>
 
-<script>
-const WPP="5581999846140";
-const frutas=["Banana","Morango","Uva","Manga"];
-const cob=["Chocolate","Morango","Caramelo","Uva"];
+<div style="margin-top:10px">
+<label>Base</label>
+<select id="base"></select>
+</div>
 
-const dados={
-m:[
-["Leite Condensado",12.99],
-["Creme Ninho",14.99],
-["Creme Nutella",14.99]],
-c:[
-["Leite Condensado",13.99],
-["Creme Ninho",15.99],
-["Creme Nutella",15.99]]
-};
+</div>
 
-function lista(id,itens){
-let h="";
-itens.forEach(x=>h+=`<label><input type="radio" name="${id}" value="${x}"> ${x}</label>`);
-document.getElementById(id).innerHTML=h;
-}
-lista("frutas",frutas);
-lista("cob",cob);
+<div id="opcoes"></div>
 
-function atualizar(){
-base.innerHTML="";
-dados[cat.value].forEach((i,n)=>{
-base.innerHTML+=`<option value="${n}">${i[0]} - R$ ${i[1].toFixed(2).replace(".",",")}</option>`;
-});
-preco.innerHTML="R$ "+dados[cat.value][0][1].toFixed(2).replace(".",",");
-}
-cat.onchange=atualizar;
-base.onchange=()=>preco.innerHTML="R$ "+dados[cat.value][base.value][1].toFixed(2).replace(".",",");
-atualizar();
-
-function pedido(){
-let f=document.querySelector('input[name=frutas]:checked');
-let c=document.querySelector('input[name=cob]:checked');
-if(!f||!c){alert("Escolha fruta e cobertura");return;}
-let item=dados[cat.value][base.value];
-let msg=`🍇 *SABOR NATURAL*%0A🍧 ${item[0]}%0A🍓 ${f.value}%0A🍯 ${c.value}%0A💰 R$ ${item[1].toFixed(2).replace(".",",")}`;
-window.open(`https://wa.me/${WPP}?text=${msg}`,"_blank");
-}
-</script>
-
-</body>
-</html>
+</div>
