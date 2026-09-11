@@ -1,121 +1,196 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sabor Natural</title>
 <style>
-body{margin:0;font-family:Arial;background:#f3f3f3}
-header{background:#6A1B9A;color:#fff;text-align:center;padding:24px}
-.card{background:#fff;margin:12px;padding:15px;border-radius:14px}
-h3{color:#6A1B9A}
-select{width:100%;padding:10px;margin:8px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-label{background:#eee;padding:8px;border-radius:8px}
-button{width:100%;padding:14px;background:#25D366;color:#fff;border:0;border-radius:10px;font-size:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial;background:#f3f3f3;color:#222}
+header{background:#6A1B9A;color:#fff;padding:22px;text-align:center}
+header p{opacity:.9}
+.container{padding:14px;max-width:500px;margin:auto}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px}
+h2{color:#6A1B9A;margin-bottom:12px;font-size:22px}
+label{font-weight:bold;display:block;margin:10px 0 5px}
+select{width:100%;padding:12px;border:1px solid #ccc;border-radius:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.item{background:#eee;padding:8px;border-radius:8px;font-size:14px}
+button{width:100%;padding:15px;border:none;border-radius:12px;background:#25D366;color:#fff;font-size:17px;font-weight:bold;margin-top:16px}
+.obs{font-size:13px;color:#777;margin-top:6px}
 </style>
 </head>
 <body>
 
 <header>
-<h2>🍇 Sabor Natural Açaíteria</h2>
-<p>Monte seu açaí</p>
+<h1>🍇 Sabor Natural</h1>
+<p>@sabor.natural86</p>
 </header>
 
+<div class="container">
 <div class="card">
-<h3>Categoria</h3>
-<select id="cat" onchange="carregar()">
-<option>Marmita</option>
-<option>Marmita + Cupuaçu</option>
-<option>Copo</option>
+<h2>Monte seu pedido</h2>
+
+<label>Categoria</label>
+<select id="categoria" onchange="carregarSabores()">
+<option value="marmita">Marmita de Açaí</option>
+<option value="acaiCup">Marmita Açaí + Cupuaçu</option>
+<option value="cupua">Marmita de Cupuaçu</option>
+<option value="cupuaCopo">Cupuaçu no Copo 400ml</option>
+<option value="copo">Açaí no Copo</option>
 </select>
 
-<div id="sabores"></div>
-
-<h3>Fruta</h3>
-<select id="fruta">
-<option>Banana</option>
-<option>Morango</option>
-<option>Uva</option>
-<option>Manga</option>
-
-</select>
-
-<h3>Cobertura</h3>
-<select id="cob">
-<option>Chocolate</option>
-<option>Morango</option>
-<option>Caramelo</option>
-<option>Uva</option>
-</select>
-
-<h3>Adicionais (até 3)</h3>
-<div class="grid" id="adds"></div>
-
-<br>
-<button onclick="pedido()">Enviar pedido no WhatsApp</button>
-</div>
-
-<script>
-const adicionais=["Leite em pó","Amendoim","Granola","Farinha láctea","Farinha de paçoca","Chocolate em gotas","M&M","Jujuba"];
-
-function carregar(){
-const s=document.getElementById("sabores");
-if(cat.value=="Copo"){
-s.innerHTML=`<h3>Tamanho</h3>
-<select id="tam" onchange="copo()">
+<div id="tamArea" style="display:none">
+<label>Tamanho</label>
+<select id="tamanho" onchange="carregarSabores()">
 <option>330ml</option>
 <option>400ml</option>
 <option>500ml</option>
 </select>
-<div id="cp"></div>`;
-copo();
+</div>
+
+<label>Sabor</label>
+<select id="sabor"></select>
+
+<div class="obs" id="obs"></div>
+
+<label>Fruta (1)</label>
+<select id="fruta"></select>
+
+<label>Cobertura (1)</label>
+<select id="cobertura"></select>
+
+<label>Adicionais</label>
+<div class="grid" id="adicionais"></div>
+
+<button onclick="enviar()">📲 Enviar Pedido</button>
+</div>
+</div>
+
+<script>
+//========================
+// EDIÇÃO FÁCIL
+//========================
+const WHATSAPP="5581999846140";
+
+const frutas=["Banana","Morango","Uva","Manga"];
+const coberturas=["Chocolate","Morango","Caramelo","Uva"];
+const adicionaisLista=[
+"Leite em pó",
+"Amendoim triturado",
+"Granola",
+"Farinha láctea",
+"Farinha de paçoca",
+"Chocolate gota chips",
+"M&M",
+"Jujuba"
+];
+
+const produtos={
+marmita:[
+{nome:"Leite Condensado",preco:12.99},
+{nome:"Creme Ninho",preco:14.99},
+{nome:"Creme de Nutella",preco:14.99}
+],
+acaiCup:[
+{nome:"Açaí + Cupuaçu Leite Condensado",preco:13.99},
+{nome:"Açaí + Cupuaçu Creme Ninho",preco:15.99},
+{nome:"Açaí + Cupuaçu Creme de Nutella",preco:15.99}
+],
+cupua:[
+{nome:"Cupuaçu/Creme ninho - marmita",preco:16.99},
+{nome:"Cupuaçu/Creme de Nutella - marmita",preco:16.99},
+{nome:"Cupuaçu/Leite condensado - marmita",preco:15.99}
+],
+cupuaCopo:[
+{nome:"Cupuaçu/Creme ninho - copo 400ml",preco:16.99},
+{nome:"Cupuaçu/Creme de Nutella - copo 400ml",preco:16.99},
+{nome:"Cupuaçu/Leite condensado - copo 400ml",preco:15.99}
+],
+copo:{
+"330ml":[
+{nome:"Leite Condensado",preco:10.99},
+{nome:"Creme Ninho",preco:12.99},
+{nome:"Creme de Nutella",preco:12.99}
+],
+"400ml":[
+{nome:"Leite Condensado",preco:12.99},
+{nome:"Creme Ninho",preco:14.99},
+{nome:"Creme de Nutella",preco:14.99}
+],
+"500ml":[
+{nome:"Leite Condensado",preco:15.99},
+{nome:"Creme Ninho",preco:16.99},
+{nome:"Creme de Nutella",preco:16.99}
+]
+}
+};
+
+const fruta=document.getElementById("fruta");
+const cobertura=document.getElementById("cobertura");
+const adicionais=document.getElementById("adicionais");
+const sabor=document.getElementById("sabor");
+const obs=document.getElementById("obs");
+
+frutas.forEach(f=>fruta.innerHTML+=`<option>${f}</option>`);
+coberturas.forEach(c=>cobertura.innerHTML+=`<option>${c}</option>`);
+adicionaisLista.forEach(a=>{
+adicionais.innerHTML+=`<label class="item"><input type="checkbox" value="${a}"> ${a}</label>`;
+});
+
+function carregarSabores(){
+const cat=categoria.value;
+tamArea.style.display=cat==="copo"?"block":"none";
+sabor.innerHTML="";
+let lista=[];
+
+if(cat==="copo"){
+lista=produtos.copo[tamanho.value];
 }else{
-s.innerHTML=`<h3>Produto</h3><select id="sab">
-<option value="16.99">Cupuaçu/Creme ninho - marmita • R$16,99</option>
-<option value="16.99">Cupuaçu/Creme de Nutella - marmita • R$16,99</option>
-<option value="15.99">Cupuaçu/Leite condensado - marmita • R$15,99</option>
-<option value="16.99">Cupuaçu/Creme ninho - copo 400ml • R$16,99</option>
-<option value="16.99">Cupuaçu/Creme de Nutella - copo 400ml • R$16,99</option>
-<option value="15.99">Cupuaçu/Leite condensado - copo 400ml • R$15,99</option>
-</select>`;
-}
-adds.innerHTML="";
-adicionais.forEach(a=>adds.innerHTML+=`<label><input type="checkbox" value="${a}"> ${a}</label>`);
+lista=produtos[cat];
 }
 
-function copo(){
-let h=`<h3>Sabor</h3><select id="sab">`;
-if(tam.value=="330ml"){
-h+=`<option value="15.99">Creme Ninho - R$15,99</option>
-<option value="15.99">Creme Nutella - R$15,99</option>
-<option value="14.99">Leite Condensado - R$14,99</option>`;
+lista.forEach(p=>{
+sabor.innerHTML+=`<option value="${p.preco}">${p.nome} - R$ ${p.preco.toFixed(2).replace(".",",")}</option>`;
+});
+
+if(cat==="copo"){
+obs.innerText=tamanho.value==="500ml"?
+"Inclui 4 adicionais • 1 fruta • 1 cobertura":
+"Inclui 3 adicionais • 1 fruta • 1 cobertura";
+}else{
+obs.innerText="Inclui 3 adicionais • 1 fruta • 1 cobertura";
 }
-if(tam.value=="400ml"){
-h+=`<option value="16.99">Creme Ninho - R$16,99</option>
-<option value="16.99">Creme Nutella - R$16,99</option>
-<option value="15.99">Leite Condensado - R$15,99</option>`;
-}
-if(tam.value=="500ml"){
-h+=`<option value="19.99">Creme Ninho - R$19,99</option>
-<option value="19.99">Creme Nutella - R$19,99</option>
-<option value="18.99">Leite Condensado - R$18,99</option>`;
-}
-cp.innerHTML=h+"</select>";
 }
 
-function pedido(){
-let texto="*🍇 SABOR NATURAL*%0A";
-texto+="Categoria: "+cat.value+"%0A";
-if(cat.value=="Copo") texto+="Tamanho: "+tam.value+"%0A";
-texto+="Sabor: "+sab.options[sab.selectedIndex].text+"%0A";
-texto+="Fruta: "+fruta.value+"%0A";
-texto+="Cobertura: "+cob.value+"%0A";
-let ad=[...document.querySelectorAll('input:checked')].map(x=>x.value).join(", ");
-texto+="Adicionais: "+(ad||"Nenhum");
-window.open("https://wa.me/5581999846140?text="+texto,"_blank");
+function enviar(){
+const marcados=[...document.querySelectorAll("input[type=checkbox]:checked")];
+let limite=3;
+if(categoria.value==="copo"&&tamanho.value==="500ml")limite=4;
+
+if(marcados.length>limite){
+alert("Escolha no máximo "+limite+" adicionais.");
+return;
 }
-carregar();
+
+let msg=`🍇 *SABOR NATURAL*%0A%0A`;
+msg+=`*Categoria:* ${categoria.options[categoria.selectedIndex].text}%0A`;
+
+if(categoria.value==="copo"){
+msg+=`*Tamanho:* ${tamanho.value}%0A`;
+}
+
+msg+=`*Produto:* ${sabor.options[sabor.selectedIndex].text}%0A`;
+msg+=`*Fruta:* ${fruta.value}%0A`;
+msg+=`*Cobertura:* ${cobertura.value}%0A`;
+msg+=`*Adicionais:* ${marcados.map(x=>x.value).join(", ")||"Nenhum"}%0A`;
+msg+=`*Instagram:* @sabor.natural86`;
+
+window.open(`https://wa.me/${WHATSAPP}?text=${msg}`,"_blank");
+}
+
+carregarSabores();
 </script>
 
 </body>
