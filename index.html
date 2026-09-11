@@ -2,106 +2,89 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sabor Natural</title>
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#5b21b6;color:#222}
-.header{
-background:linear-gradient(135deg,#6d28d9,#a21caf);
-padding:28px 20px;
-text-align:center;
-color:#fff}
-.header h1{font-size:32px}
-.header p{opacity:.95}
-.container{max-width:430px;margin:auto;padding:15px}
-.card{
-background:#fff;
-border-radius:18px;
-padding:18px;
-margin-bottom:15px}
-.titulo{
-font-size:20px;
-color:#6d28d9;
-margin-bottom:12px;
-font-weight:bold}
-select{
-width:100%;
-padding:12px;
-border-radius:10px;
-border:1px solid #ddd;
-margin-top:8px}
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:8px;
-margin-top:8px}
-.item{
-background:#f5f5f5;
-padding:10px;
-border-radius:10px;
-font-size:14px}
-.item input{margin-right:6px}
-.total{
-background:#ecfdf5;
-border:2px solid #16a34a;
-padding:15px;
-border-radius:14px;
-text-align:center}
-.total span{
-font-size:28px;
-font-weight:bold;
-color:#16a34a}
-.btn{
-width:100%;
-padding:16px;
-background:#16a34a;
-color:#fff;
-border:none;
-border-radius:14px;
-font-size:18px;
-font-weight:bold;
-margin-top:12px}
+body{margin:0;font-family:Arial;background:#f6f6f6}
+header{background:#6a1b9a;color:#fff;padding:20px;text-align:center}
+.card{background:#fff;margin:12px;padding:14px;border-radius:14px}
+h3{margin:8px 0;color:#6a1b9a}
+select{width:100%;padding:10px;margin:6px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+label{background:#eee;padding:8px;border-radius:8px;font-size:13px}
+button{width:100%;padding:14px;background:#25D366;color:#fff;border:0;border-radius:12px;font-size:16px}
 </style>
 </head>
-
 <body>
 
-<div class="header">
-<h1>🍇 SABOR NATURAL</h1>
+<header>
+<h2>🍇 Sabor Natural</h2>
 <p>@sabor.natural86</p>
-<p>WhatsApp (81) 99984-6140</p>
-</div>
-
-<div class="container">
+</header>
 
 <div class="card">
-<div class="titulo">Monte seu Açaí</div>
-
-<label>Categoria</label>
-<select id="categoria">
-<option value="marmita">Marmita de Açaí</option>
-<option value="cupuacu">Açaí + Cupuaçu</option>
-<option value="copo">Açaí no Copo</option>
+<h3>Categoria</h3>
+<select id="cat" onchange="carregar()">
+<option>Marmita</option>
+<option>Marmita + Cupuaçu</option>
+<option>Copo</option>
 </select>
 
-<div id="boxTamanho" style="display:none;margin-top:10px">
-<label>Tamanho do copo</label>
-<select id="tamanho">
-<option value="330">330ml</option>
-<option value="400">400ml</option>
-<option value="500">500ml</option>
+<div id="sabores"></div>
+
+<h3>Fruta (1)</h3>
+<select id="fruta">
+<option>Banana</option><option>Morango</option>
+<option>Uva</option><option>Manga</option>
 </select>
+
+<h3>Cobertura (1)</h3>
+<select id="cob">
+<option>Chocolate</option><option>Morango</option>
+<option>Caramelo</option><option>Uva</option>
+</select>
+
+<h3>Adicionais</h3>
+<div class="grid" id="adds"></div>
+
+<br>
+<button onclick="pedido()">Enviar pedido no WhatsApp</button>
 </div>
 
-<div style="margin-top:10px">
-<label>Base</label>
-<select id="base"></select>
-</div>
+<script>
+const adicionais=["Leite em pó","Amendoim","Granola","Farinha láctea","Paçoca","Gotas Chips","M&M","Jujuba"];
 
-</div>
+function carregar(){
+let c=cat.value,s=document.getElementById("sabores");
+if(c=="Marmita")
+s.innerHTML=`<h3>Sabor</h3><select id="sab"><option value="12.99">Leite Condensado - R$12,99</option><option value="14.99">Creme Ninho - R$14,99</option><option value="14.99">Creme Nutella - R$14,99</option></select>`;
+else if(c=="Marmita + Cupuaçu")
+s.innerHTML=`<h3>Sabor</h3><select id="sab"><option value="13.99">Leite Condensado - R$13,99</option><option value="15.99">Creme Ninho - R$15,99</option><option value="15.99">Creme Nutella - R$15,99</option></select>`;
+else
+s.innerHTML=`<h3>Tamanho</h3><select id="tam" onchange="copo()"><option>330ml</option><option>400ml</option><option>500ml</option></select><div id="cp"></div>`,copo();
+adds.innerHTML="";
+adicionais.forEach(a=>adds.innerHTML+=`<label><input type="checkbox" value="${a}"> ${a}</label>`);
+}
 
-<div id="opcoes"></div>
+function copo(){
+let t=tam.value,h=`<h3>Sabor</h3><select id="sab">`;
+if(t=="330ml")h+=`<option value="10.99">Leite Condensado R$10,99</option><option value="12.99">Creme Ninho R$12,99</option><option value="12.99">Creme Nutella R$12,99</option>`;
+if(t=="400ml")h+=`<option value="12.99">Leite Condensado R$12,99</option><option value="14.99">Creme Ninho R$14,99</option><option value="14.99">Creme Nutella R$14,99</option>`;
+if(t=="500ml")h+=`<option value="15.99">Leite Condensado R$15,99</option><option value="16.99">Creme Ninho R$16,99</option><option value="16.99">Creme Nutella R$16,99</option>`;
+cp.innerHTML=h+"</select>";
+}
 
-</div>
+function pedido(){
+let c=cat.value,lim=3;
+if(c=="Copo"&&tam.value=="500ml")lim=4;
+let sel=[...document.querySelectorAll("input:checked")].map(x=>x.value);
+if(sel.length>lim){alert("Máximo "+lim+" adicionais");return;}
+let txt=`*🍇 SABOR NATURAL*%0A%0A*Categoria:* ${c}`;
+if(c=="Copo")txt+=`%0A*Tamanho:* ${tam.value}`;
+txt+=`%0A*Sabor:* ${sab.options[sab.selectedIndex].text}%0A*Fruta:* ${fruta.value}%0A*Cobertura:* ${cob.value}%0A*Adicionais:* ${sel.join(", ")||"Nenhum"}%0A*Total:* R$ ${sab.value}`;
+open("https://wa.me/5581999846140?text="+txt);
+}
+carregar();
+</script>
+</body>
+</html>
