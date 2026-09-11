@@ -2,89 +2,52 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sabor Natural</title>
 <style>
-body{margin:0;font-family:Arial;background:#f6f6f6}
-header{background:#6a1b9a;color:#fff;padding:20px;text-align:center}
-.card{background:#fff;margin:12px;padding:14px;border-radius:14px}
-h3{margin:8px 0;color:#6a1b9a}
-select{width:100%;padding:10px;margin:6px 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-label{background:#eee;padding:8px;border-radius:8px;font-size:13px}
-button{width:100%;padding:14px;background:#25D366;color:#fff;border:0;border-radius:12px;font-size:16px}
+body{font-family:Arial;background:#F3F3F3;margin:0}
+header{background:#6A1B9A;color:#fff;padding:20px;text-align:center}
+.card{background:#fff;margin:12px;padding:15px;border-radius:14px}
+h2{color:#6A1B9A}
+select{width:100%;padding:12px;margin:8px 0}
+button{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:10px}
 </style>
 </head>
 <body>
 
 <header>
-<h2>🍇 Sabor Natural</h2>
-<p>@sabor.natural86</p>
+<h1>Sabor Natural Açaíteria</h1>
+<p>Monte seu açaí 🍓</p>
 </header>
 
 <div class="card">
-<h3>Categoria</h3>
-<select id="cat" onchange="carregar()">
-<option>Marmita</option>
-<option>Marmita + Cupuaçu</option>
-<option>Copo</option>
-</select>
+<h2>Fruta</h2>
+<select id="frutas"></select>
 
-<div id="sabores"></div>
+<h2>Calda</h2>
+<select id="caldas"></select>
 
-<h3>Fruta (1)</h3>
-<select id="fruta">
-<option>Banana</option><option>Morango</option>
-<option>Uva</option><option>Manga</option>
-</select>
+<h2>Adicional</h2>
+<select id="adicionais"></select>
 
-<h3>Cobertura (1)</h3>
-<select id="cob">
-<option>Chocolate</option><option>Morango</option>
-<option>Caramelo</option><option>Uva</option>
-</select>
-
-<h3>Adicionais</h3>
-<div class="grid" id="adds"></div>
-
-<br>
-<button onclick="pedido()">Enviar pedido no WhatsApp</button>
+<button>Enviar pedido no WhatsApp</button>
 </div>
 
 <script>
-const adicionais=["Leite em pó","Amendoim","Granola","Farinha láctea","Paçoca","Gotas Chips","M&M","Jujuba"];
-
-function carregar(){
-let c=cat.value,s=document.getElementById("sabores");
-if(c=="Marmita")
-s.innerHTML=`<h3>Sabor</h3><select id="sab"><option value="12.99">Leite Condensado - R$12,99</option><option value="14.99">Creme Ninho - R$14,99</option><option value="14.99">Creme Nutella - R$14,99</option></select>`;
-else if(c=="Marmita + Cupuaçu")
-s.innerHTML=`<h3>Sabor</h3><select id="sab"><option value="13.99">Leite Condensado - R$13,99</option><option value="15.99">Creme Ninho - R$15,99</option><option value="15.99">Creme Nutella - R$15,99</option></select>`;
-else
-s.innerHTML=`<h3>Tamanho</h3><select id="tam" onchange="copo()"><option>330ml</option><option>400ml</option><option>500ml</option></select><div id="cp"></div>`,copo();
-adds.innerHTML="";
-adicionais.forEach(a=>adds.innerHTML+=`<label><input type="checkbox" value="${a}"> ${a}</label>`);
+function carregar(id,chave){
+let dados=JSON.parse(localStorage.getItem(chave)||"[]");
+let s=document.getElementById(id);
+s.innerHTML="";
+dados.forEach(i=>{
+let o=document.createElement("option");
+o.text=i.nome||i;
+s.add(o);
+});
 }
-
-function copo(){
-let t=tam.value,h=`<h3>Sabor</h3><select id="sab">`;
-if(t=="330ml")h+=`<option value="10.99">Leite Condensado R$10,99</option><option value="12.99">Creme Ninho R$12,99</option><option value="12.99">Creme Nutella R$12,99</option>`;
-if(t=="400ml")h+=`<option value="12.99">Leite Condensado R$12,99</option><option value="14.99">Creme Ninho R$14,99</option><option value="14.99">Creme Nutella R$14,99</option>`;
-if(t=="500ml")h+=`<option value="15.99">Leite Condensado R$15,99</option><option value="16.99">Creme Ninho R$16,99</option><option value="16.99">Creme Nutella R$16,99</option>`;
-cp.innerHTML=h+"</select>";
-}
-
-function pedido(){
-let c=cat.value,lim=3;
-if(c=="Copo"&&tam.value=="500ml")lim=4;
-let sel=[...document.querySelectorAll("input:checked")].map(x=>x.value);
-if(sel.length>lim){alert("Máximo "+lim+" adicionais");return;}
-let txt=`*🍇 SABOR NATURAL*%0A%0A*Categoria:* ${c}`;
-if(c=="Copo")txt+=`%0A*Tamanho:* ${tam.value}`;
-txt+=`%0A*Sabor:* ${sab.options[sab.selectedIndex].text}%0A*Fruta:* ${fruta.value}%0A*Cobertura:* ${cob.value}%0A*Adicionais:* ${sel.join(", ")||"Nenhum"}%0A*Total:* R$ ${sab.value}`;
-open("https://wa.me/5581999846140?text="+txt);
-}
-carregar();
+carregar("frutas","frutas");
+carregar("caldas","caldas");
+carregar("adicionais","adicionais");
 </script>
+
 </body>
 </html>
