@@ -2,11 +2,72 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Sabor Natural</title>
+<style>
+body{font-family:Arial;background:#f4f4f4;margin:0}
+header{background:#6A1B9A;color:#fff;padding:16px;text-align:center}
+.box{background:#fff;margin:12px;padding:15px;border-radius:12px}
+input{width:100%;padding:12px;margin:8px 0}
+button{width:100%;padding:14px;background:#25D366;color:#fff;border:0;border-radius:10px}
+.item{background:#eee;padding:8px;border-radius:8px;margin:6px 0}
+</style>
 </head>
 <body>
-<h1>Painel Administrativo</h1>
-<p>Funcionando com sucesso!</p>
+
+<header>
+<h2>Painel Administrativo</h2>
+<p>Sabor Natural</p>
+</header>
+
+<div class="box">
+<h3>Adicionar Produto</h3>
+<input id="nome" placeholder="Nome do produto">
+<input id="preco" placeholder="Preço (12.99)">
+<input id="foto" placeholder="Link da foto">
+<button onclick="salvar()">Salvar Produto</button>
+</div>
+
+<div class="box">
+<h3>Produtos</h3>
+<div id="lista"></div>
+</div>
+
+<script>
+let produtos=JSON.parse(localStorage.getItem("produtos")||"[]");
+
+function render(){
+ let html="";
+ produtos.forEach((p,i)=>{
+   html+=`<div class=item>
+   <b>${p.nome}</b><br>
+   R$ ${p.preco}<br>
+   <button onclick="del(${i})">Excluir</button>
+   </div>`;
+ });
+ document.getElementById("lista").innerHTML=html;
+}
+
+function salvar(){
+ const p={
+  nome:nome.value,
+  preco:preco.value,
+  foto:foto.value
+ };
+ produtos.push(p);
+ localStorage.setItem("produtos",JSON.stringify(produtos));
+ nome.value="";preco.value="";foto.value="";
+ render();
+}
+
+function del(i){
+ produtos.splice(i,1);
+ localStorage.setItem("produtos",JSON.stringify(produtos));
+ render();
+}
+
+render();
+</script>
+
 </body>
 </html>
