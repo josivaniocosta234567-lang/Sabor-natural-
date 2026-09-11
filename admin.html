@@ -2,70 +2,141 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel Sabor Natural</title>
+
 <style>
-body{font-family:Arial;background:#f4f4f4;margin:0}
-header{background:#6A1B9A;color:#fff;padding:16px;text-align:center}
-.box{background:#fff;margin:12px;padding:15px;border-radius:12px}
-input{width:100%;padding:12px;margin:8px 0}
-button{width:100%;padding:14px;background:#25D366;color:#fff;border:0;border-radius:10px}
-.item{background:#eee;padding:8px;border-radius:8px;margin:6px 0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial;background:#f3f3f3}
+header{background:#6A1B9A;color:#fff;padding:18px;text-align:center}
+.container{padding:15px}
+.card{background:#fff;border-radius:14px;padding:15px;margin-bottom:15px}
+h2{color:#6A1B9A;margin-bottom:10px}
+input{
+width:100%;
+padding:12px;
+margin:6px 0;
+border:1px solid #ccc;
+border-radius:8px;
+}
+button{
+width:100%;
+padding:13px;
+background:#25D366;
+color:#fff;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+.lista{
+margin-top:10px;
+background:#eee;
+padding:10px;
+border-radius:8px;
+}
+.item{
+padding:8px;
+border-bottom:1px solid #ddd;
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<h2>Painel Administrativo</h2>
-<p>Sabor Natural</p>
+<h1>Painel Administrativo</h1>
+<p>Sabor Natural Açaíteria</p>
 </header>
 
-<div class="box">
-<h3>Adicionar Produto</h3>
-<input id="nome" placeholder="Nome do produto">
-<input id="preco" placeholder="Preço (12.99)">
-<input id="foto" placeholder="Link da foto">
-<button onclick="salvar()">Salvar Produto</button>
+<div class="container">
+
+<div class="card">
+<h2>Adicionar Fruta</h2>
+
+<input id="frutaNome" placeholder="Ex: Morango">
+
+<button onclick="addFruta()">Salvar Fruta</button>
+
+<div id="listaFrutas" class="lista"></div>
+</div><div class="card">
+<h2>Adicionar Calda</h2>
+
+<input id="caldaNome" placeholder="Ex: Chocolate">
+
+<button onclick="addCalda()">Salvar Calda</button>
+
+<div id="listaCaldas" class="lista"></div>
 </div>
 
-<div class="box">
-<h3>Produtos</h3>
-<div id="lista"></div>
+<div class="card">
+<h2>Adicionar Adicional</h2>
+
+<input id="adcNome" placeholder="Ex: Leite em pó">
+
+<button onclick="addAdicional()">Salvar Adicional</button>
+
+<div id="listaAdicionais" class="lista"></div>
 </div>
+
+<div class="card">
+<h2>Adicionar Copo</h2>
+
+<input id="copoNome" placeholder="330ml">
+<input id="copoPreco" placeholder="Preço">
+
+<button onclick="addCopo()">Salvar Copo</button>
+
+<div id="listaCopos" class="lista"></div>
+</div><div class="card">
+  <h2>Adicionar Marmita</h2>
+
+  <input id="marmitaNome" placeholder="Ex: Marmita 300g">
+  <input id="marmitaPreco" placeholder="Preço">
+
+  <button onclick="addMarmita()">Salvar Marmita</button>
+
+  <div id="listaMarmitas" class="lista"></div>
+</div>
+
+<div class="card">
+  <h2>Adicionar Foto do Produto</h2>
+
+  <input id="fotoNome" placeholder="Nome do produto">
+  <input id="fotoLink" placeholder="Link da imagem">
+
+  <button onclick="addFoto()">Salvar Foto</button>
+
+  <div id="listaFotos" class="lista"></div>
+</div></div>
 
 <script>
-let produtos=JSON.parse(localStorage.getItem("produtos")||"[]");
+let frutas=JSON.parse(localStorage.getItem("frutas")||"[]");
+let caldas=JSON.parse(localStorage.getItem("caldas")||"[]");
+let adicionais=JSON.parse(localStorage.getItem("adicionais")||"[]");
+let copos=JSON.parse(localStorage.getItem("copos")||"[]");
+let marmitas=JSON.parse(localStorage.getItem("marmitas")||"[]");
+let fotos=JSON.parse(localStorage.getItem("fotos")||"[]");
+
+function salvar(chave,valor){
+ localStorage.setItem(chave,JSON.stringify(valor));
+ render();
+}
+
+function addFruta(){frutas.push(frutaNome.value);frutaNome.value="";salvar("frutas",frutas);}
+function addCalda(){caldas.push(caldaNome.value);caldaNome.value="";salvar("caldas",caldas);}
+function addAdicional(){adicionais.push(adcNome.value);adcNome.value="";salvar("adicionais",adicionais);}
+function addCopo(){copos.push({nome:copoNome.value,preco:copoPreco.value});copoNome.value="";copoPreco.value="";salvar("copos",copos);}
+function addMarmita(){marmitas.push({nome:marmitaNome.value,preco:marmitaPreco.value});marmitaNome.value="";marmitaPreco.value="";salvar("marmitas",marmitas);}
+function addFoto(){fotos.push({nome:fotoNome.value,link:fotoLink.value});fotoNome.value="";fotoLink.value="";salvar("fotos",fotos);}
 
 function render(){
- let html="";
- produtos.forEach((p,i)=>{
-   html+=`<div class=item>
-   <b>${p.nome}</b><br>
-   R$ ${p.preco}<br>
-   <button onclick="del(${i})">Excluir</button>
-   </div>`;
- });
- document.getElementById("lista").innerHTML=html;
+ listaFrutas.innerHTML=frutas.map(x=>`<div class=item>${x}</div>`).join("");
+ listaCaldas.innerHTML=caldas.map(x=>`<div class=item>${x}</div>`).join("");
+ listaAdicionais.innerHTML=adicionais.map(x=>`<div class=item>${x}</div>`).join("");
+ listaCopos.innerHTML=copos.map(x=>`<div class=item>${x.nome} - R$ ${x.preco}</div>`).join("");
+ listaMarmitas.innerHTML=marmitas.map(x=>`<div class=item>${x.nome} - R$ ${x.preco}</div>`).join("");
+ listaFotos.innerHTML=fotos.map(x=>`<div class=item>${x.nome}</div>`).join("");
 }
-
-function salvar(){
- const p={
-  nome:nome.value,
-  preco:preco.value,
-  foto:foto.value
- };
- produtos.push(p);
- localStorage.setItem("produtos",JSON.stringify(produtos));
- nome.value="";preco.value="";foto.value="";
- render();
-}
-
-function del(i){
- produtos.splice(i,1);
- localStorage.setItem("produtos",JSON.stringify(produtos));
- render();
-}
-
 render();
 </script>
 
